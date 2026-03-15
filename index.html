@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Audit</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a12;
+  --surface: #13131e;
+  --surface2: #1c1c2a;
+  --border: #2a2a3d;
+  --accent: #7c6fff;
+  --accent-glow: rgba(124, 111, 255, 0.15);
+  --text: #e8e8f2;
+  --text-dim: #7a7a9a;
+  --green: #4ade80;
+  --red: #f87171;
+  --r: 12px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+#app { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+
+/* ── HOME ─────────────────────────────────────────────────── */
+.home-header {
+  text-align: center;
+  padding: 56px 0 48px;
+}
+.home-header h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+}
+.home-header h1 span { color: var(--accent); }
+.home-header p {
+  color: var(--text-dim);
+  font-size: 1rem;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.progress-summary {
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.progress-summary strong { color: var(--accent); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.18s, transform 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card.done { border-color: var(--green); }
+.card.in-progress { border-color: rgba(124,111,255,0.4); }
+
+.card-done-badge {
+  position: absolute;
+  top: 13px; right: 14px;
+  color: var(--green);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.card-num {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.card h3 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  padding-right: 18px;
+}
+.card-meta {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+.card-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.card-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+.card.done .card-bar-fill { background: var(--green); }
+
+/* ── CTA SECTION ──────────────────────────────────────────── */
+.cta-box {
+  margin-top: 40px;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  text-align: center;
+}
+.cta-box h2 { font-size: 1.25rem; margin-bottom: 8px; }
+.cta-box p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 22px; }
+.cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ── BUTTONS ──────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  transition: all 0.18s;
+}
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:not(:disabled):hover { background: #9088ff; }
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:not(:disabled):hover { border-color: var(--accent); }
+.btn-ghost { background: transparent; color: var(--text-dim); padding: 8px 14px; }
+.btn-ghost:hover { color: var(--text); }
+
+/* ── SECTION VIEW ─────────────────────────────────────────── */
+.section-view { padding-top: 8px; }
+
+.sec-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.sec-back {
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.sec-back:hover { color: var(--text); }
+.sec-title {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sec-counter {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 36px 32px 28px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.q-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.q-text {
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.5;
+  flex: 1;
+  margin-bottom: 28px;
+}
+
+.answer-wrap { display: flex; flex-direction: column; gap: 10px; }
+
+textarea {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 120px;
+  outline: none;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+  width: 100%;
+}
+textarea:focus { border-color: var(--accent); }
+textarea::placeholder { color: var(--text-dim); }
+
+.mic-row { display: flex; align-items: center; gap: 10px; }
+
+.mic-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.83rem;
+  font-family: var(--font);
+  transition: all 0.18s;
+}
+.mic-btn:hover { border-color: var(--accent); color: var(--text); }
+.mic-btn.active {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: var(--red);
+  color: var(--red);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.65; } }
+
+.interim {
+  font-size: 0.83rem;
+  color: var(--text-dim);
+  font-style: italic;
+  min-height: 18px;
+}
+
+/* Rating slider */
+.rating-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.rating-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.rating-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
+.rating-val {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 34px;
+  text-align: right;
+}
+
+/* Question navigation */
+.q-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+.q-dots { display: flex; gap: 5px; align-items: center; }
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.dot.answered { background: var(--green); }
+.dot.current { background: var(--accent); width: 18px; border-radius: 4px; }
+
+/* ── MODAL ────────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 480px;
+}
+.modal h2 { font-size: 1.3rem; margin-bottom: 6px; }
+.modal > p { color: var(--text-dim); font-size: 0.88rem; margin-bottom: 24px; }
+
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 0.82rem; color: var(--text-dim); margin-bottom: 6px; }
+.field input {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.93rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field input:focus { border-color: var(--accent); }
+
+.checks { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+.check-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.18s;
+}
+.check-item:hover { border-color: var(--accent); }
+.check-item input[type="checkbox"] {
+  width: 17px; height: 17px;
+  accent-color: var(--accent);
+  margin-top: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.check-label strong { display: block; font-size: 0.9rem; }
+.check-label span { font-size: 0.78rem; color: var(--text-dim); }
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* Thank you */
+.thankyou { text-align: center; padding: 12px 0; }
+.thankyou .ty-icon { font-size: 2.8rem; margin-bottom: 16px; }
+.thankyou h2 { font-size: 1.3rem; margin-bottom: 8px; }
+.thankyou p { color: var(--text-dim); font-size: 0.88rem; margin-bottom: 22px; line-height: 1.6; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .home-header h1 { font-size: 2rem; }
+  .grid { grid-template-columns: 1fr 1fr; }
+  .q-card { padding: 22px 18px 20px; }
+  .q-text { font-size: 1.1rem; }
+  .cta-box { padding: 22px 16px; }
+}
+@media (max-width: 380px) {
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const SECTIONS = [
+  {
+    title: "Current State Snapshot",
+    questions: [
+      "How would you rate your life right now out of 10?",
+      "What feels strongest in your life right now?",
+      "What feels weak, messy, or neglected?",
+      "Where do you currently feel most in control?",
+      "Where do you feel like you are drifting?",
+      "What part of life currently causes the most stress?",
+      "What part of life currently gives you the most satisfaction?",
+      "If nothing changed for the next 12 months, how would you feel?",
+      "What area of life do you secretly know needs attention?"
+    ]
+  },
+  {
+    title: "Why Are You Here?",
+    questions: [
+      "What made you want to do this audit right now?",
+      "What feels \"off\" in your life lately?",
+      "What pattern or issue are you tired of repeating?",
+      "What problem do you most want clarity on?",
+      "What would make this audit feel worthwhile?",
+      "What area of life are you currently questioning the most?",
+      "What change are you hoping this process leads to?",
+      "What would a successful outcome from this audit look like?"
+    ]
+  },
+  {
+    title: "Identity Compression",
+    questions: [
+      "If someone described you in one sentence, what would they say?",
+      "What identity currently defines most of your decisions?",
+      "Did you consciously choose that identity or grow into it by default?",
+      "Which identity are you secretly exhausted from maintaining?",
+      "Where do you feel pressure to perform a version of yourself?",
+      "If you redesigned yourself for the next 24 months, who would you become?",
+      "Which identity would stabilise your life over the next decade?",
+      "Does your identity attract the life you want, or just the attention you're used to?",
+      "If your life reflects your identity, what does your current life say about you?"
+    ]
+  },
+  {
+    title: "The Identity Gap",
+    questions: [
+      "Describe the version of yourself you respect the most.",
+      "What habits does that version of you practice consistently?",
+      "What does that version of you refuse to tolerate?",
+      "Where are you currently out of alignment with that version?",
+      "What behaviours widen the gap between who you are and who you want to be?",
+      "What behaviours would immediately close that gap?",
+      "What standards would that version of you enforce?",
+      "What would that version of you stop doing immediately?"
+    ]
+  },
+  {
+    title: "Positive Traits, Negative Traits & Origins",
+    questions: [
+      "What are your best qualities?",
+      "What are your worst habits or traits?",
+      "What compliments do you receive most often?",
+      "What criticisms do you receive most often?",
+      "What was your first real passion or obsession growing up?",
+      "What did you spend the most time doing as a kid or teenager?",
+      "What do those early interests reveal about you?",
+      "Which of your traits help your life the most?",
+      "Which of your traits create the most problems?"
+    ]
+  },
+  {
+    title: "Fear Mapping",
+    questions: [
+      "What do you fear most right now?",
+      "Who do you fear disappointing?",
+      "Who do you fear confronting?",
+      "What fear used to control you but no longer does?",
+      "What fear still quietly shapes your decisions?",
+      "What would you attempt if that fear disappeared?",
+      "What risk are you avoiding because of fear?",
+      "What fear must be confronted for you to grow?"
+    ]
+  },
+  {
+    title: "Anxiety & Trigger Awareness",
+    questions: [
+      "What situations make you tense or anxious?",
+      "What themes repeat in your anxious thoughts?",
+      "When do you feel most judged or rejected?",
+      "What experiences still seem to shape your reactions today?",
+      "What triggers you faster than it should?",
+      "What do you usually do when you feel emotionally threatened?",
+      "What helps calm you down when you're overwhelmed?",
+      "How much control do you feel you have over your reactions?"
+    ]
+  },
+  {
+    title: "Internal Threat Assessment",
+    questions: [
+      "What thought patterns hurt you the most?",
+      "What stories about yourself may no longer be true?",
+      "Where do you sabotage your own progress?",
+      "What excuses do you rely on too often?",
+      "What emotional states hijack your decision making?",
+      "What behaviour keeps repeating even though you know better?",
+      "What part of you still operates from past pain?",
+      "What internal habit must change for your life to improve?"
+    ]
+  },
+  {
+    title: "Mental Tabs Audit",
+    questions: [
+      "What unresolved issues are occupying your mind?",
+      "Which problems have been open for over 3 months?",
+      "Which issue drains the most background energy?",
+      "What decision are you postponing?",
+      "What conversation are you avoiding?",
+      "What would immediately reduce your mental noise?",
+      "What are you keeping unresolved to avoid discomfort?",
+      "If nothing changed for five years, would your stress increase or decrease?"
+    ]
+  },
+  {
+    title: "Physical Health & Energy",
+    questions: [
+      "How would you rate your current physical health?",
+      "How consistent are your sleep habits?",
+      "How often do you train or exercise weekly?",
+      "How would you rate your nutrition?",
+      "Do you feel strong, energetic, and capable day to day?",
+      "What habits improve your health the most?",
+      "What habits damage your health the most?",
+      "If nothing changed for five years, what would your health look like?"
+    ]
+  },
+  {
+    title: "Routine, Discipline & Delivery",
+    questions: [
+      "Do your daily habits support the life you want?",
+      "What routines are working well for you?",
+      "What routines are fake productivity?",
+      "Where are you disciplined?",
+      "Where are you unreliable with yourself?",
+      "What do you keep saying you will do but never do?",
+      "How strong is your follow-through when no one is watching?",
+      "What behaviour would improve your discipline immediately?"
+    ]
+  },
+  {
+    title: "Financial & Structural Reality",
+    questions: [
+      "What income bracket are you currently in?",
+      "What is your approximate monthly spending?",
+      "How many months could you survive without income?",
+      "What financial milestone are you aiming for next?",
+      "What financial decision have you been avoiding?",
+      "What percentage of income do you save or invest?",
+      "What does your spending say about your priorities?",
+      "What expense could you remove immediately?"
+    ]
+  },
+  {
+    title: "Social & Environment Architecture",
+    questions: [
+      "Who in your life reinforces the person you want to outgrow?",
+      "Who supports the person you want to become?",
+      "What relationship drains the most energy?",
+      "What conversation needs to happen but hasn't?",
+      "Are you maintaining relationships out of guilt?",
+      "What environments lower your standards?",
+      "What environments elevate your performance?",
+      "Does your living environment reflect your goals?"
+    ]
+  },
+  {
+    title: "Relationship Audit",
+    questions: [
+      "Who brings peace into your life?",
+      "Who brings chaos into your life?",
+      "Who genuinely supports you?",
+      "Who drains you or keeps you small?",
+      "Are your relationships balanced or one-sided?",
+      "Where are you overgiving?",
+      "What relationship needs repair?",
+      "What relationship may need distance?"
+    ]
+  },
+  {
+    title: "Communication Audit",
+    questions: [
+      "Do people usually understand what you mean?",
+      "Do you speak directly or avoid difficult conversations?",
+      "How well do you listen when someone is talking?",
+      "During conflict, do you react, withdraw, or dominate?",
+      "Do you express problems early or let them build up?",
+      "What communication habit causes you the most trouble?",
+      "What communication strength do you already have?",
+      "What communication skill would improve your life most?"
+    ]
+  },
+  {
+    title: "Personal Operating Limits (Boundaries)",
+    questions: [
+      "What behaviour do you tolerate that you shouldn't?",
+      "Where do people have too much access to you?",
+      "Where do you overextend yourself?",
+      "What situations leave you feeling resentful?",
+      "What limits would protect your energy?",
+      "Where do you need to say no more often?",
+      "What boundary would immediately improve your life?",
+      "What standard must you enforce going forward?"
+    ]
+  },
+  {
+    title: "Online You vs Real World You",
+    questions: [
+      "How many hours per day are you on your phone?",
+      "What apps consume most of your time?",
+      "What percentage of screen time improves your life?",
+      "Are you consuming, learning, avoiding, or performing online?",
+      "Are you more confident online than in real life?",
+      "What real-world experiences are replaced by screen time?",
+      "Does your online behaviour reflect who you really are?",
+      "Would you be proud of your yearly screen time total?"
+    ]
+  },
+  {
+    title: "Connectivity Off-Switch",
+    questions: [
+      "Can you switch off without guilt?",
+      "Do you know how to properly rest?",
+      "What happens when you sit in silence?",
+      "Do you use your phone to avoid discomfort?",
+      "When was the last time you had true quiet time?",
+      "Do you allow your mind time to process life?",
+      "What would more stillness add to your life?",
+      "What prevents you from slowing down?"
+    ]
+  },
+  {
+    title: "Ambition, Purpose & Potential",
+    questions: [
+      "What do you actually want from life?",
+      "What potential are you not living out?",
+      "What would make you proud in three years?",
+      "What area of life has the most unrealised potential?",
+      "What standard must you raise?",
+      "Where are you playing below your level?",
+      "What risk must you take to grow?",
+      "What would a fully realised version of you achieve?"
+    ]
+  },
+  {
+    title: "Values & Non-Negotiables",
+    questions: [
+      "What matters most to you right now?",
+      "What do you stand for?",
+      "What behaviours in yourself do you respect?",
+      "What behaviours in yourself do you dislike?",
+      "What are your non-negotiables?",
+      "Are you living according to your values?",
+      "Where are you betraying your standards?",
+      "What principles guide your decisions?"
+    ]
+  },
+  {
+    title: "Mirror Report (Brutal Honesty)",
+    questions: [
+      "What truth about yourself have you been avoiding?",
+      "What would someone close to you say you need to fix?",
+      "What do your habits reveal about your priorities?",
+      "Where are you full of talk but low on action?",
+      "What are you pretending not to know?",
+      "If your life is a mirror, what is it reflecting?",
+      "What must change immediately?",
+      "What responsibility do you need to accept?"
+    ]
+  },
+  {
+    title: "Category Scoring",
+    type: "scoring",
+    questions: [
+      "Identity",
+      "Emotional stability",
+      "Physical health",
+      "Mental clarity",
+      "Discipline",
+      "Relationships",
+      "Communication",
+      "Boundaries",
+      "Screen-life balance",
+      "Purpose and direction",
+      "Integrity"
+    ]
+  },
+  {
+    title: "Pattern Recognition",
+    questions: [
+      "What themes repeated in your answers?",
+      "What seems to be the root problem?",
+      "What part of life is strongest?",
+      "What part is weakest?",
+      "What surprised you about your answers?",
+      "What pattern must change first?"
+    ]
+  },
+  {
+    title: "Priority Repair List",
+    questions: [
+      "What are the top 3 issues to fix?",
+      "Which problem causes the most damage?",
+      "What change would create the biggest ripple effect?",
+      "What needs confrontation?",
+      "What needs structure?",
+      "What needs removal?"
+    ]
+  },
+  {
+    title: "The 30-Day Reset Plan",
+    questions: [
+      "What must you start doing immediately?",
+      "What must you stop doing immediately?",
+      "What must you reduce?",
+      "What must you rebuild?",
+      "What will the next 30 days look like?",
+      "What three actions are non-negotiable?"
+    ]
+  },
+  {
+    title: "Final Commitment",
+    questions: [
+      "What are you no longer available for?",
+      "What standard are you raising today?",
+      "What truth are you accepting?",
+      "What action will prove this audit mattered?"
+    ]
+  }
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let view = 'home';     // 'home' | 'section'
+let secIdx = 0;
+let qIdx = 0;
+let showModal = false;
+let showThankyou = false;
+
+// Persistent storage
+let answers = JSON.parse(localStorage.getItem('la_answers') || '{}');
+let ratings = JSON.parse(localStorage.getItem('la_ratings') || '{}');
+
+function save() {
+  localStorage.setItem('la_answers', JSON.stringify(answers));
+  localStorage.setItem('la_ratings', JSON.stringify(ratings));
+}
+
+function ak(s, q) { return `s${s}q${q}`; }
+function rk(s, q) { return `r${s}q${q}`; }
+
+function secProgress(s) {
+  const sec = SECTIONS[s];
+  let done = 0;
+  for (let q = 0; q < sec.questions.length; q++) {
+    if (sec.type === 'scoring') {
+      if (ratings[rk(s, q)] !== undefined) done++;
+    } else {
+      if (answers[ak(s, q)]?.trim()) done++;
+    }
+  }
+  return { done, total: sec.questions.length };
+}
+
+function isDone(s) {
+  const { done, total } = secProgress(s);
+  return done === total;
+}
+
+function totalDone() {
+  return SECTIONS.filter((_, i) => isDone(i)).length;
+}
+
+// Find first unanswered question in a section
+function firstUnanswered(s) {
+  const sec = SECTIONS[s];
+  for (let q = 0; q < sec.questions.length; q++) {
+    if (sec.type === 'scoring') {
+      if (ratings[rk(s, q)] === undefined) return q;
+    } else {
+      if (!answers[ak(s, q)]?.trim()) return q;
+    }
+  }
+  return sec.questions.length - 1; // all done, show last
+}
+
+// ─── SPEECH ──────────────────────────────────────────────────────────────────
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+let recording = false;
+
+if (SR) {
+  rec = new SR();
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.lang = 'en-US';
+
+  rec.onresult = (e) => {
+    let interim = '';
+    let final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+      else interim += e.results[i][0].transcript;
+    }
+    if (final) {
+      const ta = document.getElementById('ta');
+      if (ta) {
+        ta.value = (ta.value + (ta.value && !ta.value.endsWith(' ') ? ' ' : '') + final.trim()).trimStart();
+        answers[ak(secIdx, qIdx)] = ta.value;
+        save();
+      }
+    }
+    const el = document.getElementById('interim');
+    if (el) el.textContent = interim;
+  };
+
+  rec.onerror = (e) => {
+    if (e.error !== 'no-speech') { recording = false; updateMic(); }
+  };
+
+  rec.onend = () => {
+    if (recording) {
+      try { rec.start(); } catch(_) {}
+    } else {
+      updateMic();
+    }
+  };
+}
+
+function toggleMic() {
+  if (!rec) return;
+  if (recording) {
+    recording = false;
+    rec.stop();
+  } else {
+    recording = true;
+    const el = document.getElementById('interim');
+    if (el) el.textContent = '';
+    try { rec.start(); } catch(_) {}
+  }
+  updateMic();
+}
+
+function stopMic() {
+  if (recording && rec) { recording = false; rec.stop(); }
+}
+
+function updateMic() {
+  const btn = document.getElementById('mic-btn');
+  if (!btn) return;
+  if (recording) {
+    btn.className = 'mic-btn active';
+    btn.innerHTML = `<span>⏹</span> Stop`;
+  } else {
+    btn.className = 'mic-btn';
+    btn.innerHTML = `<span>🎙</span> Speak`;
+  }
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+function render() {
+  const app = document.getElementById('app');
+  let html = '';
+
+  if (view === 'home') {
+    html = renderHome();
+  } else if (view === 'section') {
+    html = renderSection();
+  }
+
+  if (showModal) html += renderModal();
+  if (showThankyou) html += renderThankyou();
+
+  app.innerHTML = html;
+  bindEvents();
+}
+
+function renderHome() {
+  const done = totalDone();
+  const total = SECTIONS.length;
+
+  const cards = SECTIONS.map((sec, i) => {
+    const { done: d, total: t } = secProgress(i);
+    const pct = t > 0 ? Math.round((d / t) * 100) : 0;
+    const cls = d === t ? 'card done' : d > 0 ? 'card in-progress' : 'card';
+    return `
+      <div class="${cls}" data-sec="${i}">
+        ${d === t ? `<div class="card-done-badge">✓</div>` : ''}
+        <div class="card-num">Section ${String(i + 1).padStart(2, '0')}</div>
+        <h3>${sec.title}</h3>
+        <div class="card-meta">${d} / ${t} ${sec.type === 'scoring' ? 'rated' : 'answered'}</div>
+        <div class="card-bar"><div class="card-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+
+  const cta = done >= 1 ? `
+    <div class="cta-box">
+      <h2>Ready for your personalised results?</h2>
+      <p>Submit your completed sections and receive expert guidance in your inbox within 72 hours.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" data-modal="advice">Personalised Advice</button>
+        <button class="btn btn-secondary" data-modal="score">Life Audit Score</button>
+      </div>
+    </div>
+  ` : '';
+
+  return `
+    <div class="home-header">
+      <h1>Life <span>Audit</span></h1>
+      <p>A guided reflection across every area of your life</p>
+    </div>
+    ${done > 0 ? `<p class="progress-summary"><strong>${done}</strong> of ${total} sections complete</p>` : ''}
+    <div class="grid">${cards}</div>
+    ${cta}
+  `;
+}
+
+function renderSection() {
+  const sec = SECTIONS[secIdx];
+  const total = sec.questions.length;
+  const isScoring = sec.type === 'scoring';
+
+  const dots = sec.questions.map((_, i) => {
+    const answered = isScoring
+      ? ratings[rk(secIdx, i)] !== undefined
+      : !!answers[ak(secIdx, i)]?.trim();
+    let cls = 'dot';
+    if (i === qIdx) cls += ' current';
+    else if (answered) cls += ' answered';
+    return `<div class="${cls}" data-goto="${i}"></div>`;
+  }).join('');
+
+  let inputHTML;
+  if (isScoring) {
+    const val = ratings[rk(secIdx, qIdx)] ?? 5;
+    inputHTML = `
+      <div class="q-label">Rate out of 10</div>
+      <div class="q-text">${sec.questions[qIdx]}</div>
+      <div class="answer-wrap">
+        <div class="rating-wrap">
+          <div class="rating-row">
+            <input type="range" id="rating-rng" min="1" max="10" value="${val}">
+            <div class="rating-val" id="rating-val">${val}</div>
+          </div>
+          <div class="rating-labels"><span>1 — Poor</span><span>10 — Excellent</span></div>
+        </div>
+      </div>
+    `;
+  } else {
+    const existing = answers[ak(secIdx, qIdx)] || '';
+    inputHTML = `
+      <div class="q-label">Question ${qIdx + 1} of ${total}</div>
+      <div class="q-text">${sec.questions[qIdx]}</div>
+      <div class="answer-wrap">
+        <textarea id="ta" placeholder="Type or speak your answer…">${existing}</textarea>
+        <div class="mic-row">
+          ${rec ? `<button id="mic-btn" class="mic-btn"><span>🎙</span> Speak</button>` : ''}
+          <span id="interim" class="interim"></span>
+          ${!rec ? `<span style="font-size:0.78rem;color:var(--text-dim)">Speech not available in this browser</span>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  const isLast = qIdx === total - 1;
+
+  return `
+    <div class="section-view">
+      <div class="sec-topbar">
+        <span class="sec-back" id="btn-back">← Sections</span>
+        <span class="sec-title">${sec.title}</span>
+        <span class="sec-counter">${qIdx + 1} / ${total}</span>
+      </div>
+      <div class="q-card">${inputHTML}</div>
+      <div class="q-nav">
+        <button class="btn btn-secondary" id="btn-prev" ${qIdx === 0 ? 'disabled' : ''}>← Previous</button>
+        <div class="q-dots">${dots}</div>
+        ${isLast
+          ? `<button class="btn btn-primary" id="btn-done">Finish ✓</button>`
+          : `<button class="btn btn-primary" id="btn-next">Next →</button>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+function renderModal() {
+  return `
+    <div class="overlay" id="overlay">
+      <div class="modal">
+        <h2>Get Your Results</h2>
+        <p>We'll deliver your personalised results to your inbox within 72 hours.</p>
+        <div class="field">
+          <label>Your name</label>
+          <input type="text" id="f-name" placeholder="First name">
+        </div>
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="f-email" placeholder="you@example.com">
+        </div>
+        <div class="checks">
+          <label class="check-item">
+            <input type="checkbox" id="chk-advice" checked>
+            <div class="check-label">
+              <strong>Personalised Advice</strong>
+              <span>Tailored recommendations based on your audit responses</span>
+            </div>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="chk-score" checked>
+            <div class="check-label">
+              <strong>Life Audit Score</strong>
+              <span>A detailed breakdown of your scores across all life categories</span>
+            </div>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="btn-cancel">Cancel</button>
+          <button class="btn btn-primary" id="btn-submit">Submit Request</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderThankyou() {
+  return `
+    <div class="overlay">
+      <div class="modal">
+        <div class="thankyou">
+          <div class="ty-icon">✅</div>
+          <h2>Request Received</h2>
+          <p>Your personalised results will be delivered to your inbox within 72 hours.<br><br>Your answers have also been downloaded as a text file for your records.</p>
+          <button class="btn btn-primary" id="btn-ty-close">Back to Audit</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── EVENTS ──────────────────────────────────────────────────────────────────
+
+function bindEvents() {
+  // Home: section cards
+  document.querySelectorAll('[data-sec]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = parseInt(el.dataset.sec);
+      secIdx = i;
+      qIdx = firstUnanswered(i);
+      view = 'section';
+      render();
+    });
+  });
+
+  // Home: CTA buttons
+  document.querySelectorAll('[data-modal]').forEach(el => {
+    el.addEventListener('click', () => {
+      showModal = true;
+      render();
+      const type = el.dataset.modal;
+      setTimeout(() => {
+        const advice = document.getElementById('chk-advice');
+        const score = document.getElementById('chk-score');
+        if (advice && score) {
+          if (type === 'advice') score.checked = false;
+          if (type === 'score') advice.checked = false;
+        }
+      }, 0);
+    });
+  });
+
+  // Section: back
+  const back = document.getElementById('btn-back');
+  if (back) back.addEventListener('click', () => { stopMic(); view = 'home'; render(); });
+
+  // Section: prev
+  const prev = document.getElementById('btn-prev');
+  if (prev) prev.addEventListener('click', () => { stopMic(); qIdx--; render(); });
+
+  // Section: next
+  const next = document.getElementById('btn-next');
+  if (next) next.addEventListener('click', () => { stopMic(); qIdx++; render(); });
+
+  // Section: done
+  const done = document.getElementById('btn-done');
+  if (done) done.addEventListener('click', () => { stopMic(); view = 'home'; render(); });
+
+  // Section: dot navigation
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', () => { stopMic(); qIdx = parseInt(el.dataset.goto); render(); });
+  });
+
+  // Textarea
+  const ta = document.getElementById('ta');
+  if (ta) {
+    ta.addEventListener('input', () => {
+      answers[ak(secIdx, qIdx)] = ta.value;
+      save();
+    });
+  }
+
+  // Rating
+  const rng = document.getElementById('rating-rng');
+  if (rng) {
+    rng.addEventListener('input', () => {
+      ratings[rk(secIdx, qIdx)] = parseInt(rng.value);
+      save();
+      const disp = document.getElementById('rating-val');
+      if (disp) disp.textContent = rng.value;
+    });
+    // Save initial default value if not yet set
+    if (ratings[rk(secIdx, qIdx)] === undefined) {
+      ratings[rk(secIdx, qIdx)] = parseInt(rng.value);
+      save();
+    }
+  }
+
+  // Mic
+  const mic = document.getElementById('mic-btn');
+  if (mic) mic.addEventListener('click', toggleMic);
+
+  // Modal: cancel
+  const cancel = document.getElementById('btn-cancel');
+  if (cancel) cancel.addEventListener('click', () => { showModal = false; render(); });
+
+  // Modal: overlay click
+  const overlay = document.getElementById('overlay');
+  if (overlay) overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) { showModal = false; render(); }
+  });
+
+  // Modal: submit
+  const submit = document.getElementById('btn-submit');
+  if (submit) submit.addEventListener('click', handleSubmit);
+
+  // Thankyou: close
+  const tyClose = document.getElementById('btn-ty-close');
+  if (tyClose) tyClose.addEventListener('click', () => { showThankyou = false; render(); });
+}
+
+// ─── SUBMIT ──────────────────────────────────────────────────────────────────
+
+function handleSubmit() {
+  const name = document.getElementById('f-name')?.value?.trim() || '';
+  const email = document.getElementById('f-email')?.value?.trim() || '';
+  const wantsAdvice = document.getElementById('chk-advice')?.checked;
+  const wantsScore = document.getElementById('chk-score')?.checked;
+
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+  if (!wantsAdvice && !wantsScore) {
+    alert('Please select at least one option.');
+    return;
+  }
+
+  const services = [wantsAdvice && 'Personalised Advice', wantsScore && 'Life Audit Score'].filter(Boolean).join(', ');
+
+  // Build full answer document
+  let doc = `LIFE AUDIT SUBMISSION\n`;
+  doc += `${'─'.repeat(40)}\n`;
+  doc += `Name:     ${name || 'Not provided'}\n`;
+  doc += `Email:    ${email}\n`;
+  doc += `Request:  ${services}\n`;
+  doc += `Date:     ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}\n`;
+  doc += `${'─'.repeat(40)}\n`;
+
+  SECTIONS.forEach((sec, si) => {
+    doc += `\n${si + 1}. ${sec.title.toUpperCase()}\n${'─'.repeat(40)}\n`;
+    sec.questions.forEach((q, qi) => {
+      if (sec.type === 'scoring') {
+        const val = ratings[rk(si, qi)];
+        doc += `${q}: ${val !== undefined ? val + '/10' : 'Not rated'}\n`;
+      } else {
+        const a = answers[ak(si, qi)];
+        doc += `Q: ${q}\n`;
+        doc += `A: ${a?.trim() || '(no answer)'}\n\n`;
+      }
+    });
+  });
+
+  // Download as .txt
+  const blob = new Blob([doc], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `life-audit-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // Open mailto for request (just contact info, not full answers)
+  const subject = encodeURIComponent(`Life Audit Request — ${name || email}`);
+  const body = encodeURIComponent(
+    `Hi,\n\nI've completed my Life Audit and would like to request: ${services}.\n\nName: ${name || 'Not provided'}\nEmail: ${email}\n\nI've attached my full answers document.\n\nThank you.`
+  );
+  setTimeout(() => {
+    window.location.href = `mailto:hello@lifeaudit.com?subject=${subject}&body=${body}`;
+  }, 300);
+
+  showModal = false;
+  showThankyou = true;
+  render();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+render();
+</script>
+</body>
+</html>
