@@ -59,6 +59,14 @@ body {
 }
 .progress-summary strong { color: var(--accent); }
 
+.motivational-msg {
+  display: block;
+  font-style: italic;
+  color: var(--accent);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -78,6 +86,11 @@ body {
 .card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .card.done { border-color: var(--green); }
 .card.in-progress { border-color: rgba(124,111,255,0.4); }
+.card.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.card.locked:hover { border-color: var(--border); transform: none; }
 
 .card-done-badge {
   position: absolute;
@@ -85,6 +98,11 @@ body {
   color: var(--green);
   font-size: 0.8rem;
   font-weight: 700;
+}
+.card-lock {
+  position: absolute;
+  top: 13px; right: 14px;
+  font-size: 0.85rem;
 }
 
 .card-num {
@@ -120,6 +138,36 @@ body {
   transition: width 0.3s;
 }
 .card.done .card-bar-fill { background: var(--green); }
+
+/* ── STAGE GROUPS ─────────────────────────────────────────── */
+.stage-group {
+  margin-bottom: 32px;
+}
+.stage-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.stage-name {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.stage-progress {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+.stage-unlock-hint {
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  opacity: 0.7;
+}
 
 /* ── CTA SECTION ──────────────────────────────────────────── */
 .cta-box {
@@ -300,6 +348,13 @@ textarea::placeholder { color: var(--text-dim); }
   text-align: right;
 }
 
+.rating-note-label {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+  display: block;
+}
+
 /* Question navigation */
 .q-nav {
   display: flex;
@@ -317,6 +372,89 @@ textarea::placeholder { color: var(--text-dim); }
 }
 .dot.answered { background: var(--green); }
 .dot.current { background: var(--accent); width: 18px; border-radius: 4px; }
+
+/* ── DEPTH INDICATOR ──────────────────────────────────────── */
+.depth-indicator {
+  margin-top: 2px;
+}
+.depth-empty .depth-hint-text {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+.depth-bar-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.depth-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.25s, background-color 0.25s;
+}
+.depth-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 6px;
+}
+.depth-count {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+.depth-meta {
+  display: flex;
+  align-items: center;
+}
+
+/* ── HINT SECTION ─────────────────────────────────────────── */
+.hint-section {
+  margin-top: 4px;
+}
+.hint-toggle {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.hint-toggle:hover { color: var(--text); }
+.hint-drawer {
+  margin-top: 8px;
+  padding: 14px 16px;
+  background: var(--surface2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+}
+.hint-drawer-intro {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  font-style: italic;
+}
+.hint-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.hint-list li {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  padding-left: 18px;
+  position: relative;
+}
+.hint-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
 
 /* ── MODAL ────────────────────────────────────────────────── */
 .overlay {
@@ -392,6 +530,163 @@ textarea::placeholder { color: var(--text-dim); }
 .thankyou h2 { font-size: 1.3rem; margin-bottom: 8px; }
 .thankyou p { color: var(--text-dim); font-size: 0.88rem; margin-bottom: 22px; line-height: 1.6; }
 
+/* ── MIND UNLOCK MODAL ────────────────────────────────────── */
+.mind-unlock-modal {
+  text-align: center;
+  padding: 8px 0;
+}
+.mind-unlock-tag {
+  display: inline-block;
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(124,111,255,0.3);
+  margin-bottom: 18px;
+}
+.mind-unlock-heading {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.mind-unlock-prompt {
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+.mind-unlock-sub {
+  font-style: italic;
+  font-size: 0.83rem;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+
+/* ── NOTABLE REFLECTIONS ──────────────────────────────────── */
+.notable-reflections {
+  margin-top: 36px;
+  margin-bottom: 8px;
+}
+.notable-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.notable-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.reflection-quote {
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 10px;
+}
+.reflection-quote blockquote {
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.reflection-source {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ── ONBOARDING SCREEN ────────────────────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 20px rgba(124,111,255,0.4), 0 0 40px rgba(124,111,255,0.2); }
+  50% { text-shadow: 0 0 30px rgba(124,111,255,0.7), 0 0 60px rgba(124,111,255,0.35); }
+}
+
+.onboarding-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.onboarding-inner {
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+}
+.onboarding-icon {
+  font-size: 3.6rem;
+  color: var(--accent);
+  animation: glow-pulse 2.4s ease-in-out infinite;
+  display: block;
+  margin-bottom: 24px;
+}
+.onboarding-inner h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+}
+.onboarding-inner > p {
+  color: var(--text-dim);
+  font-size: 1rem;
+  margin-bottom: 36px;
+}
+.onboarding-points {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+.onboarding-point {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+.op-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.onboarding-point strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.onboarding-point span {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.onboarding-time {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 28px;
+  line-height: 1.7;
+  text-align: left;
+}
+.onboarding-btn {
+  width: 100%;
+  padding: 15px 24px;
+  font-size: 1rem;
+}
+
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 600px) {
   .home-header h1 { font-size: 2rem; }
@@ -399,6 +694,7 @@ textarea::placeholder { color: var(--text-dim); }
   .q-card { padding: 22px 18px 20px; }
   .q-text { font-size: 1.1rem; }
   .cta-box { padding: 22px 16px; }
+  .onboarding-inner h1 { font-size: 1.7rem; }
 }
 @media (max-width: 380px) {
   .grid { grid-template-columns: 1fr; }
@@ -749,6 +1045,29 @@ const SECTIONS = [
   }
 ];
 
+// ─── STAGES ──────────────────────────────────────────────────────────────────
+
+const STAGES = [
+  { name: "Awareness",          range: [0, 4]   },
+  { name: "Internal Landscape", range: [5, 9]   },
+  { name: "Structure",          range: [10, 14] },
+  { name: "External Life",      range: [15, 19] },
+  { name: "Future Direction",   range: [20, 25] }
+];
+
+// ─── MIND UNLOCK PROMPTS ──────────────────────────────────────────────────────
+
+const MIND_UNLOCKS = [
+  { heading: "Before moving on…",  prompt: "What was your first big dream in life?" },
+  { heading: "Take a moment…",     prompt: "What smell instantly brings back a childhood memory?" },
+  { heading: "Pause and reflect…", prompt: "When did you last feel completely free?" },
+  { heading: "Before moving on…",  prompt: "What would 10-year-old you think of your life right now?" },
+  { heading: "Take a moment…",     prompt: "What's one thing you've quietly let go of that you once cared deeply about?" },
+  { heading: "Pause and reflect…", prompt: "When were you last truly proud of yourself?" },
+  { heading: "Before moving on…",  prompt: "What part of your old self do you miss?" },
+  { heading: "Take a moment…",     prompt: "If you could send one message to yourself five years ago, what would it say?" }
+];
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 
 let view = 'home';     // 'home' | 'section'
@@ -756,6 +1075,10 @@ let secIdx = 0;
 let qIdx = 0;
 let showModal = false;
 let showThankyou = false;
+let showOnboarding = !localStorage.getItem('la_seen_intro');
+let mindUnlockData = null;
+let hintOpen = false;
+let ratingNotes = JSON.parse(localStorage.getItem('la_rnotes') || '{}');
 
 // Persistent storage
 let answers = JSON.parse(localStorage.getItem('la_answers') || '{}');
@@ -764,10 +1087,12 @@ let ratings = JSON.parse(localStorage.getItem('la_ratings') || '{}');
 function save() {
   localStorage.setItem('la_answers', JSON.stringify(answers));
   localStorage.setItem('la_ratings', JSON.stringify(ratings));
+  localStorage.setItem('la_rnotes', JSON.stringify(ratingNotes));
 }
 
 function ak(s, q) { return `s${s}q${q}`; }
 function rk(s, q) { return `r${s}q${q}`; }
+function nk(s, q) { return `n${s}q${q}`; }
 
 function secProgress(s) {
   const sec = SECTIONS[s];
@@ -804,6 +1129,25 @@ function firstUnanswered(s) {
   return sec.questions.length - 1; // all done, show last
 }
 
+// Stage unlock logic: stage N unlocks when ALL sections in stage N-1 are done
+function isStageUnlocked(stageIdx) {
+  if (stageIdx === 0) return true;
+  const prev = STAGES[stageIdx - 1];
+  for (let i = prev.range[0]; i <= prev.range[1]; i++) {
+    if (!isDone(i)) return false;
+  }
+  return true;
+}
+
+function stageCompletionCount(stageIdx) {
+  const stage = STAGES[stageIdx];
+  let done = 0;
+  for (let i = stage.range[0]; i <= stage.range[1]; i++) {
+    if (isDone(i)) done++;
+  }
+  return done;
+}
+
 // ─── SPEECH ──────────────────────────────────────────────────────────────────
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -829,6 +1173,7 @@ if (SR) {
         ta.value = (ta.value + (ta.value && !ta.value.endsWith(' ') ? ' ' : '') + final.trim()).trimStart();
         answers[ak(secIdx, qIdx)] = ta.value;
         save();
+        updateDepthIndicator(ta.value);
       }
     }
     const el = document.getElementById('interim');
@@ -878,11 +1223,68 @@ function updateMic() {
   }
 }
 
+// ─── DEPTH INDICATOR ─────────────────────────────────────────────────────────
+
+function wordCount(text) {
+  return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+}
+
+function updateDepthIndicator(text) {
+  const el = document.getElementById('depth-indicator');
+  if (!el) return;
+  const wc = wordCount(text);
+  if (wc === 0) {
+    el.innerHTML = `<div class="depth-empty"><span class="depth-hint-text">The more detail you provide, the more accurate your insights will be.</span></div>`;
+    return;
+  }
+  let color, label, pct;
+  if (wc <= 20) {
+    color = 'var(--red)';
+    label = 'Surface level';
+    pct = Math.round((wc / 20) * 50);
+  } else if (wc <= 60) {
+    color = '#f59e0b';
+    label = 'Good reflection';
+    pct = 50 + Math.round(((wc - 20) / 40) * 50);
+  } else {
+    color = 'var(--green)';
+    label = 'Deep response';
+    pct = 100;
+  }
+  el.innerHTML = `
+    <div class="depth-bar-track">
+      <div class="depth-bar-fill" style="width:${pct}%;background:${color}"></div>
+    </div>
+    <div class="depth-meta">
+      <span class="depth-label" style="color:${color}">${label}</span>
+      <span class="depth-count">${wc} word${wc !== 1 ? 's' : ''}</span>
+    </div>
+  `;
+}
+
+// ─── MOTIVATIONAL MESSAGE ─────────────────────────────────────────────────────
+
+function getMotivationalMsg(done) {
+  if (done === 26) return "You've completed your Life Audit. Remarkable.";
+  if (done >= 20) return "You're close to completing your full audit.";
+  if (done >= 15) return "Real clarity is forming.";
+  if (done >= 10) return "You're going deeper than most ever will.";
+  if (done >= 5)  return "Patterns are starting to emerge.";
+  if (done >= 1)  return "You're beginning to see the bigger picture.";
+  return null;
+}
+
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 
 function render() {
   const app = document.getElementById('app');
   let html = '';
+
+  if (showOnboarding) {
+    app.innerHTML = renderOnboarding();
+    bindEvents();
+    return;
+  }
 
   if (view === 'home') {
     html = renderHome();
@@ -890,31 +1292,121 @@ function render() {
     html = renderSection();
   }
 
+  if (mindUnlockData) html += renderMindUnlock();
   if (showModal) html += renderModal();
   if (showThankyou) html += renderThankyou();
 
   app.innerHTML = html;
   bindEvents();
+
+  // Restore depth indicator state if in section view with a textarea
+  if (view === 'section') {
+    const sec = SECTIONS[secIdx];
+    if (sec.type !== 'scoring') {
+      const existing = answers[ak(secIdx, qIdx)] || '';
+      updateDepthIndicator(existing);
+    }
+  }
+}
+
+function renderOnboarding() {
+  return `
+    <div class="onboarding-screen">
+      <div class="onboarding-inner">
+        <span class="onboarding-icon">◎</span>
+        <h1>Welcome to the Life Audit</h1>
+        <p>A guided self-reflection across every area of your life</p>
+        <div class="onboarding-points">
+          <div class="onboarding-point">
+            <span class="op-icon">🔍</span>
+            <div>
+              <strong>More detail leads to deeper insight</strong>
+              <span>The more honestly you answer, the more valuable your results will be</span>
+            </div>
+          </div>
+          <div class="onboarding-point">
+            <span class="op-icon">🔒</span>
+            <div>
+              <strong>Your responses are completely private</strong>
+              <span>Everything is stored locally on your device — nothing is shared without your consent</span>
+            </div>
+          </div>
+          <div class="onboarding-point">
+            <span class="op-icon">⏸</span>
+            <div>
+              <strong>You can pause and return anytime</strong>
+              <span>Progress is saved automatically — pick up where you left off</span>
+            </div>
+          </div>
+          <div class="onboarding-point">
+            <span class="op-icon">🎙</span>
+            <div>
+              <strong>Type or speak your answers</strong>
+              <span>Many people find that speaking their thoughts leads to deeper, more honest responses</span>
+            </div>
+          </div>
+        </div>
+        <p class="onboarding-time">The time required varies depending on how deeply you reflect. Some move through quickly — others take time with each question. There is no right pace.</p>
+        <button class="btn btn-primary onboarding-btn" id="btn-begin">Begin Your Audit →</button>
+      </div>
+    </div>
+  `;
 }
 
 function renderHome() {
   const done = totalDone();
   const total = SECTIONS.length;
 
-  const cards = SECTIONS.map((sec, i) => {
-    const { done: d, total: t } = secProgress(i);
-    const pct = t > 0 ? Math.round((d / t) * 100) : 0;
-    const cls = d === t ? 'card done' : d > 0 ? 'card in-progress' : 'card';
+  // Build stage groups
+  const stageGroups = STAGES.map((stage, si) => {
+    const unlocked = isStageUnlocked(si);
+    const completedCount = stageCompletionCount(si);
+    const stageTotal = stage.range[1] - stage.range[0] + 1;
+
+    const progressText = unlocked
+      ? `${completedCount} / ${stageTotal} complete`
+      : `<span class="stage-unlock-hint">Complete previous stage to unlock</span>`;
+
+    const cards = [];
+    for (let i = stage.range[0]; i <= stage.range[1]; i++) {
+      const sec = SECTIONS[i];
+      const { done: d, total: t } = secProgress(i);
+      const pct = t > 0 ? Math.round((d / t) * 100) : 0;
+      let cls = 'card';
+      if (!unlocked) {
+        cls += ' locked';
+      } else if (d === t) {
+        cls += ' done';
+      } else if (d > 0) {
+        cls += ' in-progress';
+      }
+
+      const secAttr = unlocked ? `data-sec="${i}"` : '';
+      cards.push(`
+        <div class="${cls}" ${secAttr}>
+          ${!unlocked ? `<div class="card-lock">🔒</div>` : (d === t ? `<div class="card-done-badge">✓</div>` : '')}
+          <div class="card-num">Section ${String(i + 1).padStart(2, '0')}</div>
+          <h3>${sec.title}</h3>
+          <div class="card-meta">${d} / ${t} ${sec.type === 'scoring' ? 'rated' : 'answered'}</div>
+          <div class="card-bar"><div class="card-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      `);
+    }
+
     return `
-      <div class="${cls}" data-sec="${i}">
-        ${d === t ? `<div class="card-done-badge">✓</div>` : ''}
-        <div class="card-num">Section ${String(i + 1).padStart(2, '0')}</div>
-        <h3>${sec.title}</h3>
-        <div class="card-meta">${d} / ${t} ${sec.type === 'scoring' ? 'rated' : 'answered'}</div>
-        <div class="card-bar"><div class="card-bar-fill" style="width:${pct}%"></div></div>
+      <div class="stage-group">
+        <div class="stage-header">
+          <span class="stage-name">Stage ${si + 1} — ${stage.name}</span>
+          <span class="stage-progress">${progressText}</span>
+        </div>
+        <div class="grid">${cards.join('')}</div>
       </div>
     `;
   }).join('');
+
+  const motivMsg = getMotivationalMsg(done);
+
+  const notableReflections = renderNotableReflections();
 
   const cta = done >= 1 ? `
     <div class="cta-box">
@@ -932,9 +1424,50 @@ function renderHome() {
       <h1>Life <span>Audit</span></h1>
       <p>A guided reflection across every area of your life</p>
     </div>
-    ${done > 0 ? `<p class="progress-summary"><strong>${done}</strong> of ${total} sections complete</p>` : ''}
-    <div class="grid">${cards}</div>
+    ${done > 0 ? `
+      <p class="progress-summary">
+        <strong>${done}</strong> of ${total} sections complete
+        ${motivMsg ? `<span class="motivational-msg">${motivMsg}</span>` : ''}
+      </p>
+    ` : ''}
+    ${stageGroups}
+    ${notableReflections}
     ${cta}
+  `;
+}
+
+function renderNotableReflections() {
+  const notable = [];
+  for (let s = 0; s < SECTIONS.length; s++) {
+    const sec = SECTIONS[s];
+    if (sec.type === 'scoring') continue;
+    for (let q = 0; q < sec.questions.length; q++) {
+      const text = answers[ak(s, q)] || '';
+      if (wordCount(text) >= 60) {
+        notable.push({ text, title: sec.title });
+        if (notable.length >= 3) break;
+      }
+    }
+    if (notable.length >= 3) break;
+  }
+  if (notable.length === 0) return '';
+
+  const quotes = notable.map(({ text, title }) => {
+    const truncated = text.length > 200 ? text.slice(0, 200) + '…' : text;
+    return `
+      <div class="reflection-quote">
+        <blockquote>"${truncated}"</blockquote>
+        <div class="reflection-source">${title}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="notable-reflections">
+      <h2 class="notable-title">Your Reflections</h2>
+      <p class="notable-subtitle">Moments of depth from your audit</p>
+      ${quotes}
+    </div>
   `;
 }
 
@@ -956,6 +1489,7 @@ function renderSection() {
   let inputHTML;
   if (isScoring) {
     const val = ratings[rk(secIdx, qIdx)] ?? 5;
+    const noteVal = ratingNotes[nk(secIdx, qIdx)] || '';
     inputHTML = `
       <div class="q-label">Rate out of 10</div>
       <div class="q-text">${sec.questions[qIdx]}</div>
@@ -967,19 +1501,37 @@ function renderSection() {
           </div>
           <div class="rating-labels"><span>1 — Poor</span><span>10 — Excellent</span></div>
         </div>
+        <span class="rating-note-label">Why did you choose this number? (optional)</span>
+        <textarea id="rating-note" style="min-height:80px" placeholder="Optional — explain your score…">${noteVal}</textarea>
       </div>
     `;
   } else {
     const existing = answers[ak(secIdx, qIdx)] || '';
+    const hintDrawer = hintOpen ? `
+      <div class="hint-drawer">
+        <div class="hint-drawer-intro">Try reflecting on one of these:</div>
+        <ul class="hint-list">
+          <li>What specific example from your life comes to mind?</li>
+          <li>How does this affect your day-to-day life?</li>
+          <li>What would you honestly tell a close friend who asked you this?</li>
+          <li>What's one thing you've been avoiding thinking about here?</li>
+        </ul>
+      </div>
+    ` : '';
     inputHTML = `
       <div class="q-label">Question ${qIdx + 1} of ${total}</div>
       <div class="q-text">${sec.questions[qIdx]}</div>
       <div class="answer-wrap">
         <textarea id="ta" placeholder="Type or speak your answer…">${existing}</textarea>
+        <div id="depth-indicator" class="depth-indicator"></div>
         <div class="mic-row">
           ${rec ? `<button id="mic-btn" class="mic-btn"><span>🎙</span> Speak</button>` : ''}
           <span id="interim" class="interim"></span>
           ${!rec ? `<span style="font-size:0.78rem;color:var(--text-dim)">Speech not available in this browser</span>` : ''}
+        </div>
+        <div class="hint-section">
+          <button class="hint-toggle" id="btn-hint">${hintOpen ? '▾' : '▸'} Need help getting started?</button>
+          ${hintDrawer}
         </div>
       </div>
     `;
@@ -1061,15 +1613,57 @@ function renderThankyou() {
   `;
 }
 
+function renderMindUnlock() {
+  return `
+    <div class="overlay" id="mind-unlock-overlay">
+      <div class="modal">
+        <div class="mind-unlock-modal">
+          <div class="mind-unlock-tag">Mind Unlock</div>
+          <div class="mind-unlock-heading">${mindUnlockData.heading}</div>
+          <div class="mind-unlock-prompt">${mindUnlockData.prompt}</div>
+          <div class="mind-unlock-sub">Take a moment to sit with this thought before continuing.</div>
+          <button class="btn btn-primary" id="btn-mind-unlock-continue">Continue →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── SECTION DONE HANDLER ────────────────────────────────────────────────────
+
+function handleSectionDone() {
+  stopMic();
+  hintOpen = false;
+  // 40% chance of mind unlock if not the last section
+  if (secIdx < 25 && Math.random() < 0.4) {
+    mindUnlockData = MIND_UNLOCKS[Math.floor(Math.random() * MIND_UNLOCKS.length)];
+    render();
+  } else {
+    view = 'home';
+    render();
+  }
+}
+
 // ─── EVENTS ──────────────────────────────────────────────────────────────────
 
 function bindEvents() {
+  // Onboarding: begin
+  const beginBtn = document.getElementById('btn-begin');
+  if (beginBtn) {
+    beginBtn.addEventListener('click', () => {
+      localStorage.setItem('la_seen_intro', '1');
+      showOnboarding = false;
+      render();
+    });
+  }
+
   // Home: section cards
   document.querySelectorAll('[data-sec]').forEach(el => {
     el.addEventListener('click', () => {
       const i = parseInt(el.dataset.sec);
       secIdx = i;
       qIdx = firstUnanswered(i);
+      hintOpen = false;
       view = 'section';
       render();
     });
@@ -1094,7 +1688,7 @@ function bindEvents() {
 
   // Section: back
   const back = document.getElementById('btn-back');
-  if (back) back.addEventListener('click', () => { stopMic(); view = 'home'; render(); });
+  if (back) back.addEventListener('click', () => { stopMic(); hintOpen = false; view = 'home'; render(); });
 
   // Section: prev
   const prev = document.getElementById('btn-prev');
@@ -1106,7 +1700,7 @@ function bindEvents() {
 
   // Section: done
   const done = document.getElementById('btn-done');
-  if (done) done.addEventListener('click', () => { stopMic(); view = 'home'; render(); });
+  if (done) done.addEventListener('click', handleSectionDone);
 
   // Section: dot navigation
   document.querySelectorAll('[data-goto]').forEach(el => {
@@ -1119,6 +1713,7 @@ function bindEvents() {
     ta.addEventListener('input', () => {
       answers[ak(secIdx, qIdx)] = ta.value;
       save();
+      updateDepthIndicator(ta.value);
     });
   }
 
@@ -1138,9 +1733,37 @@ function bindEvents() {
     }
   }
 
+  // Rating note textarea
+  const ratingNote = document.getElementById('rating-note');
+  if (ratingNote) {
+    ratingNote.addEventListener('input', () => {
+      ratingNotes[nk(secIdx, qIdx)] = ratingNote.value;
+      save();
+    });
+  }
+
   // Mic
   const mic = document.getElementById('mic-btn');
   if (mic) mic.addEventListener('click', toggleMic);
+
+  // Hint toggle
+  const hintBtn = document.getElementById('btn-hint');
+  if (hintBtn) {
+    hintBtn.addEventListener('click', () => {
+      hintOpen = !hintOpen;
+      render();
+    });
+  }
+
+  // Mind unlock: continue
+  const mindContinue = document.getElementById('btn-mind-unlock-continue');
+  if (mindContinue) {
+    mindContinue.addEventListener('click', () => {
+      mindUnlockData = null;
+      view = 'home';
+      render();
+    });
+  }
 
   // Modal: cancel
   const cancel = document.getElementById('btn-cancel');
